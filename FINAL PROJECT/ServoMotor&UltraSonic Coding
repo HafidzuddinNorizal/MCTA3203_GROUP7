@@ -1,0 +1,47 @@
+#include <Servo.h>
+
+#define trigPin 9
+#define echoPin 8
+
+Servo servo;
+
+void setup() {
+  Serial.begin(9600);
+  pinMode(trigPin, OUTPUT);
+  pinMode(echoPin, INPUT);
+  servo.attach(3);
+}
+
+void loop() {
+  long duration, distance;
+  
+  // Send a short pulse to trigger the sensor
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(2);
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin, LOW);
+
+  // Read the echo pulse
+  duration = pulseIn(echoPin, HIGH);
+
+  // Calculate the distance in cm
+  distance = (duration / 2) / 29.1;
+
+  // Print the distance to the Serial Monitor
+  Serial.print("Distance: ");
+  Serial.print(distance);
+  Serial.println(" cm");
+
+  // Actuate the servo based on the distance
+  if (distance < 10) {
+    servo.write(140);
+  } else if (distance > 10) {
+    servo.write(230);
+  } else {
+    Serial.println("The distance is more than 180 cm");
+  }
+
+  // Wait for 500 ms before the next loop
+  delay(500);
+}
